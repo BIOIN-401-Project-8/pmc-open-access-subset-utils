@@ -101,17 +101,22 @@ def run_efetch(query: str, output_dir: Path, esearch_output_dir: Path, efetch_ou
     efetch_output_xml = efetch_output_dir / f"{query_file_name}.xml"
 
     logging.info(f"Running efetch for {query}")
-    output = subprocess.run(
-        ["efetch", "-db", "pubmed", "-format", "xml", "-input", esearch_output_xml],
-        capture_output=True,
-        text=True,
-    )
-    if output.returncode != 0:
+    with open(esearch_output_xml, "r") as f:
+        esearch_output = f.read()
+        p = subprocess.Popen(
+            ["efetch"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        output = p.communicate(input=esearch_output)
+    if p.returncode != 0:
         logging.warning(f"Query efetch {query} failed")
-        logging.warning(output.stderr)
+        logging.warning(output[1])
         return
     with open(efetch_output_xml, "w") as f:
-        f.write(output.stdout)
+        f.write(output[0])
 
     logging.info(f"Extracting articles for {query}")
     extract_pubmed_articles(output_dir, efetch_output_xml)
