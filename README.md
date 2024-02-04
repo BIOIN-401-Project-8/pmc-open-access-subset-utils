@@ -8,4 +8,8 @@ wget -m ftp://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk/oa_comm/xml/
 ```bash
 python3 untar.py ..data
 ```
-3. 
+3. Generate plots
+```bash
+python3 generate_plots.py
+```
+
