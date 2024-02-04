@@ -62,6 +62,11 @@
 			"source": "${localEnv:HOME}/.wakatime.cfg",
 			"target": "/root/.wakatime.cfg",
 			"type": "bind"
+		},
+		{
+			"source": "${localEnv:HOME}/Github/bioin-401-project/data",
+			"target": "/data",
+			"type": "bind"
 		}
 	]
 }
