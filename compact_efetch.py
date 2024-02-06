@@ -14,10 +14,7 @@ def extract_pubmed_articles(path: Path, pubmed_article_set_path: str):
     try:
         tree = ET.parse(pubmed_article_set_path)
     except ET.ParseError:
-        try:
-            Path(pubmed_article_set_path).unlink()
-        except FileNotFoundError:
-            logger.warning(f'FileNotFoundError: {pubmed_article_set_path}')
+        logger.exception(pubmed_article_set_path)
         return
     root = tree.getroot()
 
@@ -28,7 +25,9 @@ def extract_pubmed_articles(path: Path, pubmed_article_set_path: str):
 
     pubmed_article_stem = Path(pubmed_article_set_path).stem
     csv_path = csv_dir / f"{pubmed_article_stem}.csv"
+
     if csv_path.exists():
+        logger.info(f'{csv_path} exists, skipping')
         return
 
     with open(csv_path, 'w') as f:

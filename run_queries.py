@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -114,9 +115,16 @@ def run_efetch(query: str, output_dir: Path, esearch_output_dir: Path, efetch_ou
     if p.returncode != 0:
         logging.warning(f"Query efetch {query} failed")
         logging.warning(output[1])
-        return
+
+    xml = output[0]
+    # &rsquo; is not a valid XML entity
+    xml = re.sub(r"&rsquo;", "'", xml)
+    # fix XML bug with unescaped ampersands
+    xml = re.sub(r"&(?!amp;|lt;|gt;|rdquo;)", "&amp;", xml)
+
+
     with open(efetch_output_xml, "w") as f:
-        f.write(output[0])
+        f.write(xml)
 
     logging.info(f"Extracting articles for {query}")
     extract_pubmed_articles(output_dir, efetch_output_xml)
