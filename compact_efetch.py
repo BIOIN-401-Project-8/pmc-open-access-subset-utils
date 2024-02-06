@@ -26,14 +26,17 @@ def extract_pubmed_articles(path: Path, pubmed_article_set_path: str):
     csv_dir = path / 'csv'
     csv_dir.mkdir(parents=True, exist_ok=True)
 
+    pubmed_article_stem = Path(pubmed_article_set_path).stem
+    csv_path = csv_dir / f"{pubmed_article_stem}.csv"
+    if csv_path.exists():
+        return
+
+    with open(csv_path, 'w') as f:
+        f.write('pubmed_article_set, pubmed_article\n')
+
     for pubmed_article in root.findall('PubmedArticle'):
         pmid = pubmed_article.find('MedlineCitation/PMID').text
-        pubmed_article_stem = Path(pubmed_article_set_path).stem
-        csv_path = csv_dir / f"{pubmed_article_stem}.csv"
         pubmed_article_path = pubmed_article_dir / f"{pmid}.xml"
-        if not csv_path.exists():
-            with open(csv_path, 'w') as f:
-                f.write('pubmed_article_set, pubmed_article\n')
         with open(csv_path, 'a') as f:
             f.write(f'{pubmed_article_stem}, {pmid}\n')
         if pubmed_article_path.exists():
@@ -51,7 +54,7 @@ def main():
     pubmed_article_sets = glob.glob(str(path / 'efetch/PubmedArticleSet/*.xml'))
     pubmed_article_sets.sort(key=lambda x: os.path.getsize(x))
     for pubmed_article_set in tqdm.tqdm(pubmed_article_sets):
-        extract_pubmed_articles(pubmed_article_set)
+        extract_pubmed_articles(path, pubmed_article_set)
 
 
 if __name__ == '__main__':
