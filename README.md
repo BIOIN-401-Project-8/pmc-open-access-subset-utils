@@ -16,3 +16,8 @@ python3 run_queries.py rare_genetic_disease_names.csv /data/pmc-open-access-subs
 ```bash
 python3 generate_plots.py
 ```
+5. Sync data from PMC Open Access Subset to S3
+Use crontab to run this script at 2 am daily
+```bash
+0 2 * * * python3 ./sync.py
+```
