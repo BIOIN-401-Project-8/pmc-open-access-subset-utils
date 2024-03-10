@@ -9,6 +9,8 @@ from asyncio import Semaphore
 from datetime import date, datetime
 from pathlib import Path
 
+import aiofiles
+import aiohttp
 from tqdm import tqdm
 from tqdm.asyncio import tqdm_asyncio
 
@@ -33,9 +35,16 @@ async def sync_baselines(group: str):
 async def sync_baseline(group: str, csv: str, targz: str, sem: Semaphore):
     with tempfile.NamedTemporaryFile() as tmp:
         url = f"{FTP_PATH}/oa_{group}/xml/{targz}"
-        async with sem:
+        timeout = aiohttp.ClientTimeout(total=None)
+        async with sem, aiohttp.ClientSession(timeout=timeout) as session:
             logger.info(f"{url} -> {tmp.name}")
-            urllib.request.urlretrieve(url, tmp.name)
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    async with aiofiles.open(tmp.name, mode="wb") as f:
+                        async for chunk in resp.content.iter_any():
+                            await f.write(chunk)
+                else:
+                    raise Exception(f"Failed to download {url}")
         Path(f"{LOCAL_PATH}/oa_{group}/xml/").mkdir(parents=True, exist_ok=True)
         args = ["tar", "-xzvf", tmp.name, "-C", f"{LOCAL_PATH}/oa_{group}/xml/"]
         logger.info(" ".join(args))
@@ -51,9 +60,15 @@ async def sync_baseline(group: str, csv: str, targz: str, sem: Semaphore):
             raise Exception(f"Failed to extract {tmp.name} to {LOCAL_PATH}/oa_{group}/xml/")
     url = f"{FTP_PATH}/oa_{group}/xml/{csv}"
     filename = f"{LOCAL_PATH}/oa_{group}/xml/{csv}"
-    async with sem:
-        logger.info(f"{url} -> {filename}")
-        urllib.request.urlretrieve(url, filename)
+    logger.info(f"{url} -> {filename}")
+    timeout = aiohttp.ClientTimeout(total=None)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                async with aiofiles.open(filename, mode="wb") as f:
+                    await f.write(await resp.read())
+            else:
+                raise Exception(f"Failed to download {url}")
 
 
 def get_remote_baselines(group: str):
@@ -73,9 +88,16 @@ def get_local_baselines(group: str):
 async def sync_incr(date: str, group: str, sem: Semaphore):
     with tempfile.NamedTemporaryFile() as tmp:
         url = f"{FTP_PATH}/oa_{group}/xml/oa_{group}_xml.incr.{date}.tar.gz"
-        async with sem:
+        timeout = aiohttp.ClientTimeout(total=None)
+        async with sem, aiohttp.ClientSession(timeout=timeout) as session:
             logger.info(f"{url} -> {tmp.name}")
-            urllib.request.urlretrieve(url, tmp.name)
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    async with aiofiles.open(tmp.name, mode="wb") as f:
+                        async for chunk in resp.content.iter_any():
+                            await f.write(chunk)
+                else:
+                    raise Exception(f"Failed to download {url}")
         args = ["tar", "-xzvf", tmp.name, "-C", f"{LOCAL_PATH}/oa_{group}/xml/"]
         logger.info(" ".join(args))
         process = await asyncio.create_subprocess_exec(
@@ -90,9 +112,15 @@ async def sync_incr(date: str, group: str, sem: Semaphore):
             raise Exception(f"Failed to extract {tmp.name} to {LOCAL_PATH}/oa_{group}/xml/")
     url = f"{FTP_PATH}/oa_{group}/xml/oa_{group}_xml.incr.{date}.filelist.csv"
     filename = f"{LOCAL_PATH}/oa_{group}/xml/oa_{group}_xml.incr.{date}.filelist.csv"
-    async with sem:
-        logger.info(f"{url} -> {filename}")
-        urllib.request.urlretrieve(url, filename)
+    logger.info(f"{url} -> {filename}")
+    timeout = aiohttp.ClientTimeout(total=None)
+    async with aiohttp.ClientSession(timeout=None) as session:
+        async with session.get(url) as resp:
+            if resp.status == 200:
+                async with aiofiles.open(filename, mode="wb") as f:
+                    await f.write(await resp.read())
+            else:
+                raise Exception(f"Failed to download {url}")
 
 
 def get_local_dates(group):
@@ -115,7 +143,7 @@ async def sync_incrs(group: str):
     remote_latest_dates = get_remote_dates(group)
     dates_delta = sorted(set(remote_latest_dates) - set(local_latest_dates))
     if not dates_delta:
-        logger.info(f"Already up to date for group {group} incr")
+        logger.info(f"Already up to date for group {group} incrs")
     else:
         logger.info(f"Dates delta: {dates_delta}")
     sem = Semaphore(1)
