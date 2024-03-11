@@ -114,7 +114,7 @@ async def sync_incr(date: str, group: str, sem: Semaphore):
     filename = f"{LOCAL_PATH}/oa_{group}/xml/oa_{group}_xml.incr.{date}.filelist.csv"
     logger.info(f"{url} -> {filename}")
     timeout = aiohttp.ClientTimeout(total=None)
-    async with aiohttp.ClientSession(timeout=None) as session:
+    async with aiohttp.ClientSession(timeout=timeout) as session:
         async with session.get(url) as resp:
             if resp.status == 200:
                 async with aiofiles.open(filename, mode="wb") as f:
@@ -152,6 +152,9 @@ async def sync_incrs(group: str):
 
 
 async def main():
+    # TODO: logs broken..
+    # TODO: highly duplicated code
+    # TODO: highly coupled to file stucture
     Path("logs").mkdir(parents=True, exist_ok=True)
     filename = f"logs/{Path(__file__).stem}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
     logging.basicConfig(
