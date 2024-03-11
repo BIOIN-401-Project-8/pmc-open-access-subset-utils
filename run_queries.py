@@ -24,7 +24,7 @@ def main():
     args = parser.parse_args()
 
     logging.basicConfig(
-        filename=f"run_queries_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
+        filename=f"logs/run_queries_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
         filemode="w",
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
@@ -81,6 +81,8 @@ def main():
 def run_esearch(query: str, esearch_output_dir: Path):
     query_file_name = get_query_file_name(query)
     esearch_output_xml = esearch_output_dir / f"{query_file_name}.xml"
+
+    query = f'(("2020/11/03"[Date - Publication] : "3000"[Date - Publication])) AND ({query})'
 
     logging.info(f"Running esearch for {query}")
     output = subprocess.run(
