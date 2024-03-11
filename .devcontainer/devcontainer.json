@@ -67,6 +67,11 @@
 			"source": "${localEnv:HOME}/Github/bioin-401-project/data",
 			"target": "/data",
 			"type": "bind"
+		},
+		{
+			"source": "/media/data/bioin-401-project/ftp.ncbi.nlm.nih.gov/",
+			"target": "/data/ftp.ncbi.nlm.nih.gov/",
+			"type": "bind"
 		}
 	]
 }
