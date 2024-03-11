@@ -1,0 +1,38 @@
+33333140|t|Is microvascular dysfunction a systemic disorder with common biomarkers found in the heart, brain, and kidneys? - A scoping review.
+33333140|a|Although microvascular dysfunction (MVD) has been well characterized in individual organs as different disease entities, clinical evidence is mounting in support of an underlying systemic process. To address this hypothesis, we systematically searched PubMed and Medline for studies in adults published between 2014 and 2019 that measured blood biomarkers of MVD in three vital organs i.e. brain, heart, and the kidney. Of the 9706 unique articles 321 met the criteria, reporting 49 biomarkers of which 16 were common to the three organs. Endothelial dysfunction, inflammation including reactive oxidation, immune activation, and coagulation were the commonly recognized pathways. Triglyceride, C-reactive protein, Cystatin C, homocysteine, uric acid, IL-6, NT-proBNP, thrombomodulin, von Willebrand Factor, and uric acid were increased in MVD of all three organs. In contrast, vitamin D was decreased. Adiponectin, asymmetric dimethylarginine, total cholesterol, high-density and low-density cholesterol were found to be variably increased or decreased in studies. We review the pathways underlying MVD in the three organs and summarize evidence supporting its systemic nature. This scoping review informs clinicians and researchers in the multi-system manifestation of MVD. Future work should focus on longitudinal investigations to evaluate the multi-system involvement of this disease.
+33333140	3	28	microvascular dysfunction	Disease	MESH:D017566
+33333140	31	48	systemic disorder	Disease	MESH:D009422
+33333140	141	166	microvascular dysfunction	Disease	MESH:D017566
+33333140	168	171	MVD	Disease	MESH:D017566
+33333140	491	494	MVD	Disease	MESH:D017566
+33333140	671	694	Endothelial dysfunction	Disease	MESH:D014652
+33333140	696	708	inflammation	Disease	MESH:D007249
+33333140	762	773	coagulation	Disease	MESH:D001778
+33333140	813	825	Triglyceride	Chemical	MESH:D014280
+33333140	827	845	C-reactive protein	Gene	1401
+33333140	847	857	Cystatin C	Gene	1471
+33333140	859	871	homocysteine	Chemical	MESH:D006710
+33333140	873	882	uric acid	Chemical	MESH:D014527
+33333140	884	888	IL-6	Gene	3569
+33333140	901	915	thrombomodulin	Gene	7056
+33333140	917	938	von Willebrand Factor	Gene	7450
+33333140	944	953	uric acid	Chemical	MESH:D014527
+33333140	972	975	MVD	Disease	MESH:D017566
+33333140	1010	1019	vitamin D	Chemical	MESH:D014807
+33333140	1035	1046	Adiponectin	Gene	9370
+33333140	1048	1075	asymmetric dimethylarginine	Chemical	MESH:C018524
+33333140	1083	1094	cholesterol	Chemical	MESH:D002784
+33333140	1096	1136	high-density and low-density cholesterol	Chemical	-
+33333140	1232	1235	MVD	Disease	MESH:D017566
+33333140	1403	1406	MVD	Disease	MESH:D017566
+33333140	Positive_Correlation	MESH:D017566	3569
+33333140	Association	MESH:D017566	9370
+33333140	Positive_Correlation	MESH:D017566	1471
+33333140	Association	MESH:D014807	MESH:D017566
+33333140	Positive_Correlation	MESH:D017566	7450
+33333140	Positive_Correlation	MESH:D017566	7056
+33333140	Positive_Correlation	MESH:D014280	MESH:D017566
+33333140	Positive_Correlation	MESH:D014527	MESH:D017566
+33333140	Positive_Correlation	MESH:D006710	MESH:D017566
+33333140	Positive_Correlation	MESH:D017566	1401
+
