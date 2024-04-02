@@ -26,6 +26,9 @@ async def sync_baselines(ftp_path: str, local_path: str, group: str):
     logger.info(f"CSVs delta: {csvs_delta}")
     if not csvs_delta:
         logger.info(f"Already up to date for group {group} baselines")
+    else:
+        Path(f"{local_path}/oa_{group}/xml").unlink(missing_ok=True)
+
     sem = Semaphore(1)
     await tqdm_asyncio.gather(
         *[
