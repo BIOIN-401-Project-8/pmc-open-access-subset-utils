@@ -3,9 +3,13 @@
 {
 	"name": "pmc-open-access-subset-utils",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
+	// docker compose
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "devcontainer",
+	"runServices": [
+		"devcontainer"
+	],
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -33,45 +37,5 @@
 				"wakatime.vscode-wakatime"
 			]
 		}
-	},
-
-	"runArgs": [
-		"--env-file",
-		".devcontainer/devcontainer.env",
-		"--gpus",
-		"all",
-	],
-
-	"mounts": [
-		{
-			"source": "dind-var-lib-docker",
-			"target": "/var/lib/docker",
-			"type": "volume"
-		},
-		{
-			"source": "${localEnv:HOME}/.cache",
-			"target": "/root/.cache",
-			"type": "bind"
-		},
-		{
-			"source": "${localEnv:HOME}/.kaggle",
-			"target": "/root/.kaggle",
-			"type": "bind"
-		},
-		{
-			"source": "${localEnv:HOME}/.wakatime.cfg",
-			"target": "/root/.wakatime.cfg",
-			"type": "bind"
-		},
-		{
-			"source": "${localEnv:HOME}/Github/bioin-401-project/data",
-			"target": "/data",
-			"type": "bind"
-		},
-		{
-			"source": "/media/data/bioin-401-project/ftp.ncbi.nlm.nih.gov/",
-			"target": "/data/ftp.ncbi.nlm.nih.gov/",
-			"type": "bind"
-		}
-	]
+	}
 }

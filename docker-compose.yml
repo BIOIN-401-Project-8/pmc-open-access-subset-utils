@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - LLAMA_INDEX_CACHE_DIR=/root/.cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    shm_size: 2gb
+    volumes:
+      - ..:/workspaces:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.ssh:/root/.ssh:cached
+      - ~/.gitconfig:/root/.gitconfig:cached
+      - ~/.wakatime.cfg:/root/.wakatime.cfg:cached
+      - ~/.cache:/root/.cache:cached
+      - ~/Github/bioin-401-project/data:/data:cached
+    command: sleep infinity
