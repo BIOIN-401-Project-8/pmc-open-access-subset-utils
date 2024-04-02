@@ -190,14 +190,21 @@ async def main():
         default="logs",
         help="Path to store logs",
     )
+    parser.add_argument(
+        "--groups",
+        type=str,
+        nargs="+",
+        default=["comm", "noncomm", "other"],
+        help="Groups to download",
+    )
     args = parser.parse_args()
     ftp_path = args.ftp_path
     local_path = args.local_path
     log_path = Path(args.log_path)
+    groups = args.groups
 
     setup_logger(log_path)
 
-    groups = ["comm", "noncomm", "other"]
     for group in groups:
         await sync_baselines(ftp_path, local_path, group)
         await sync_incrs(ftp_path, local_path, group)
