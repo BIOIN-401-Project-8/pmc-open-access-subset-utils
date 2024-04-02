@@ -1,7 +1,7 @@
 import glob
 from pathlib import Path
 
-from bioc import biocxml
+from bioc import biocxml, BioCCollection
 from bioconverters import pubmedxml2bioc, pmcxml2bioc
 from tqdm import tqdm
 
@@ -23,12 +23,14 @@ def convert_abstracts():
         path_bioc = pmc_bioc_dir / path.with_suffix(".bioc").name
         if path_bioc.exists():
             continue
-        doc = next(pubmedxml2bioc(pmc_xml))
-        doc.encoding = 'utf-8'
-        doc.standalone = True
+        documents = list(pubmedxml2bioc(pmc_xml))
+        for document in documents:
+            for passage in document.passages:
+                passage.infons["type"] = passage.infons["section"]
+        collection = BioCCollection.of_documents(*documents)
 
         with open(str(path_bioc), 'w') as fp:
-            biocxml.dump(doc, fp)
+            biocxml.dump(collection, fp)
 
 
 def convert_pmc_xml():

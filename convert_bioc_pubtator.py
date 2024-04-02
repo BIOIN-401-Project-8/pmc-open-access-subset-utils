@@ -9,7 +9,7 @@ from src.bioc2pubtator import bioc2pubtator
 
 
 def convert_abstracts():
-    pmc_xmls = glob.glob("/data/pmc-open-access-subset/abstracts-taggerone-disease/*")
+    pmc_xmls = glob.glob("/data/pmc-open-access-subset/abstracts-ner/*")
     pmc_pubtator_dir = Path("/data/pmc-open-access-subset/abstracts-pubtator")
     pmc_pubtator_dir.mkdir(exist_ok=True)
 
