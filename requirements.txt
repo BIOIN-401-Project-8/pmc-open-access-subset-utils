@@ -1,0 +1,3 @@
+bioconverters==1.0.1
+bioc==2.1
+bconv==1.2.1
