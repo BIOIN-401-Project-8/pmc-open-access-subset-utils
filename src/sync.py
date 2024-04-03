@@ -27,7 +27,6 @@ async def sync_baselines(ftp_path: str, local_path: str, group: str):
     if not csvs_delta:
         logger.info(f"Already up to date for group {group} baselines")
     else:
-        Path(f"{local_path}/oa_{group}/xml").unlink(missing_ok=True)
 
     sem = Semaphore(1)
     await tqdm_asyncio.gather(
@@ -172,7 +171,7 @@ def setup_logger(log_path: Path):
     logger.addHandler(console)
 
 
-async def main():
+async def main(args=None):
     # TODO: remove code duplication
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -200,7 +199,7 @@ async def main():
         default=["comm", "noncomm", "other"],
         help="Groups to download",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     ftp_path = args.ftp_path
     local_path = args.local_path
     log_path = Path(args.log_path)

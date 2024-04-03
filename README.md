@@ -32,7 +32,7 @@ services:
    a fast SSD (write speeds of 5,100 MB/s). The requires about 499 GB of disk
    space.
 ```bash
-docker compose run devcontainer python3 ./sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
+docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
 
 2. Run PubMed queries to retrieve relevant PMIDs and abstracts. This step takes
