@@ -3,6 +3,7 @@ import asyncio
 import glob
 import logging
 import re
+import shutil
 import subprocess
 import tempfile
 import urllib.request
@@ -27,6 +28,7 @@ async def sync_baselines(ftp_path: str, local_path: str, group: str):
     if not csvs_delta:
         logger.info(f"Already up to date for group {group} baselines")
     else:
+        shutil.rmtree(f"{local_path}/oa_{group}/xml", ignore_errors=True)
 
     sem = Semaphore(1)
     await tqdm_asyncio.gather(
