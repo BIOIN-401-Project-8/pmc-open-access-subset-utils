@@ -2,7 +2,7 @@ import glob
 
 import pytest
 
-from src.sync import main, get_local_dates, get_remote_dates
+from src.sync import get_local_dates, get_remote_dates, main
 
 pytest_plugins = ("pytest_asyncio",)
 
