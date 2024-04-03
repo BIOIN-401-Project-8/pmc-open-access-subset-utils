@@ -16,7 +16,7 @@ async def test_sync(tmp_path):
         assert f"/oa_other/xml/PMC0{i:02}xxxxxx" in paths
     baseline_paths = [path for path in paths if "baseline" in path]
     assert len(baseline_paths) >= 11
-    remote_dates = get_remote_dates("other")
+    remote_dates = get_remote_dates("https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk", "other")
     local_dates = get_local_dates(str(tmp_path), "other")
     dates_delta = sorted(set(remote_dates) - set(local_dates))
     assert not dates_delta
