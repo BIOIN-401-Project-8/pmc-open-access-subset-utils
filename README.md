@@ -41,7 +41,7 @@ cutting off the number of articles we are searching for each query. This require
 about 82 GB of disk space.
 ```bash
 
-docker compose run devcontainer python3 run_queries.py rare_genetic_disease_names.csv /data/pmc-open-access-subset/
+docker compose run devcontainer python3 ./src/query.py ./data/rare_genetic_disease_names.csv /data/pmc-open-access-subset/
 ```
 3. Setup crontab to run the sync script at 2 am daily.
 ```bash

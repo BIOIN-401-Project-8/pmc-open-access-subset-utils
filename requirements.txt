@@ -1,6 +1,4 @@
-# bioconverters==1.0.1
-# bioc==2.1
-# bconv==1.2.1
 aiofiles==23.2.1
 aiohttp==3.9.3
+pandas==2.2.1
 tqdm==4.66.2

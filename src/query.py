@@ -4,7 +4,6 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from xml.etree import ElementTree as ET
 
 import pandas as pd
 from tqdm.contrib.concurrent import thread_map
@@ -67,14 +66,7 @@ def main():
     print(f"Running efetch for {len(df_to_efetch)} queries")
 
     thread_map(
-        lambda query: run_efetch(
-            query,
-            output_dir,
-            esearch_output_dir,
-            efetch_output_dir
-        ),
-        df_to_efetch,
-        max_workers=5
+        lambda query: run_efetch(query, output_dir, esearch_output_dir, efetch_output_dir), df_to_efetch, max_workers=5
     )
 
 
@@ -123,7 +115,6 @@ def run_efetch(query: str, output_dir: Path, esearch_output_dir: Path, efetch_ou
     xml = re.sub(r"&rsquo;", "'", xml)
     # fix XML bug with unescaped ampersands
     xml = re.sub(r"&(?!amp;|lt;|gt;|rdquo;)", "&amp;", xml)
-
 
     with open(efetch_output_xml, "w") as f:
         f.write(xml)
