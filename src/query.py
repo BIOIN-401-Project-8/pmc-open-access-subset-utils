@@ -48,6 +48,9 @@ def main():
     )
     df = df.sort_values(by="esearch_output_size", ascending=True)
     df = df[df["esearch_output_size"] > 0]
+    df["query_contains_syndrome"] = df[df.columns[0]].str.contains("Syndrome", case=False)
+    # if esearch_output_size is the same as previous and the query contains "Syndrome" skip
+    df = df.drop_duplicates(subset=["esearch_output_size", "query_contains_syndrome"], keep="first")
     df["csv_output_exists"] = df[df.columns[0]].apply(
         lambda query: (csv_output_dir / f"{get_query_file_name(query)}.csv").exists()
     )
@@ -61,6 +64,9 @@ def main():
 def run_esearch(query: str, esearch_output_dir: Path):
     query_file_name = get_query_file_name(query)
     esearch_output_xml = esearch_output_dir / f"{query_file_name}.xml"
+
+    if esearch_output_xml.exists():
+        return
 
     args = ["esearch", "-db", "pubmed", "-query", query]
     logging.info(" ".join(args))
