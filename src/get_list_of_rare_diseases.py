@@ -15,7 +15,9 @@ def main():
 
     df = pd.DataFrame(rare_diseases, columns=["rare_disease"])
     df = df.drop_duplicates()
-    df.to_csv("data/rare_diseases2.csv", index=False)
+    # for terms containing OR, we need to wrap them in parentheses
+    df["rare_disease"] = df["rare_disease"].str.replace(r"([\w-]+ or [\w]+)", r"(\1)", regex=True)
+    df.to_csv("data/rare_diseases.csv", index=False)
 
 
 if __name__ == "__main__":
