@@ -1,10 +1,10 @@
 from xml.etree import ElementTree as ET
 
 
-def get_esearch_count(path: str) -> int:
+def get_esearch_key(esearch_result: str, key: str = "Count") -> int:
     try:
-        tree = ET.parse(path)
+        tree = ET.fromstring(esearch_result)
     except ET.ParseError:
         return 0
-    count = tree.find('Count').text
+    count = tree.find(key).text
     return int(count) if count else 0
