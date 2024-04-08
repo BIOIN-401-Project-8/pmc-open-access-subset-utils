@@ -1,6 +1,8 @@
 version: '3.8'
 services:
   devcontainer:
+    environment:
+      - EDIRECT_LOCAL_ARCHIVE=/workspaces/data/Archive
     build:
       context: .
       dockerfile: Dockerfile

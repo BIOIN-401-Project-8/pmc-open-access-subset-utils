@@ -9,3 +9,7 @@ RUN echo "export PATH=\$HOME/edirect:\$PATH" >> $HOME/.bash_profile
 # Install Python dependencies
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# mkdir -p $EDIRECT_LOCAL_ARCHIVE
+# archive-pubmed
+# ?archive-pubmed -index
