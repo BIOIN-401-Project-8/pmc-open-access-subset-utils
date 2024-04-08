@@ -64,14 +64,14 @@ docker compose run devcontainer python3 ./src/merge.py /data/pmc-open-access-sub
 ```bash
 crontab -e
 # Add the below line to the crontab
-0 2 * * * docker compose run devcontainer python3 ./sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
+0 2 * * * docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
 
 6. Setup crontab to run the query script at 3 am daily.
 ```bash
 crontab -e
 # Add the below line to the crontab
-0 3 * * * docker compose run devcontainer python3 run_queries.py rare_genetic_disease_names.csv /data/pmc-open-access-subset/
+0 3 * * * docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv /data/pmc-open-access-subset/
 ```
 
 7. Setup crontab to run the merge script at 4 am daily.

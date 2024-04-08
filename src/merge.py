@@ -1,4 +1,4 @@
-#%%
+import argparse
 import glob
 import logging
 import shutil
@@ -64,10 +64,15 @@ def copy_article(path, output_dir):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output_dir", type=str, default="/data/pmc-open-access-subset")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
     )
+    args = parser.parse_args()
+    output_dir = Path(args.output_dir)
+
     Path("logs").mkdir(exist_ok=True, parents=True)
     file_handler = logging.FileHandler(f"logs/filter_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
     file_handler.setLevel(logging.INFO)
@@ -88,7 +93,7 @@ def main():
     logger.info("Merging PubMed and efetch dataframes...")
     merged_df = pubmed_df.merge(efetch_df, on="PMID", how="right")
     logger.info(f"Length of merged dataframe: {len(merged_df)}")
-    out_csv_path = "/data/pmc-open-access-subset/merged.csv"
+    out_csv_path = output_dir / "merged.csv"
     logger.info(f"Saving merged dataframe to {out_csv_path}")
     merged_df.to_csv(out_csv_path, index=False)
 
