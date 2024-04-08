@@ -5,7 +5,8 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from tqdm.contrib.concurrent import process_map, thread_map
+from tqdm.contrib.concurrent import thread_map
+from unidecode import unidecode
 
 from utils import get_esearch_key
 
@@ -40,7 +41,7 @@ def main():
 
     logger.info(f"Running esearch for {len(df)} queries")
 
-    thread_map(lambda query: run_esearch(query, esearch_output_dir), df[df.columns[0]])
+    thread_map(lambda query: run_esearch(query, esearch_output_dir), df[df.columns[0]], max_workers=10)
 
     # sort df by size of esearch output
     df["esearch_output_size"] = df[df.columns[0]].apply(
@@ -62,27 +63,35 @@ def main():
     df_to_efetch = df[~df["csv_output_exists"]][df.columns[0]]
     logger.info(f"Running efetch for {len(df_to_efetch)} queries")
 
-    thread_map(lambda query: run_efetch(query, esearch_output_dir, csv_output_dir), df_to_efetch, max_workers=8)
+    thread_map(lambda query: run_efetch(query, esearch_output_dir, csv_output_dir), df_to_efetch, max_workers=10)
 
 
 def run_esearch(query: str, esearch_output_dir: Path):
     query_file_name = get_query_file_name(query)
     esearch_output_xml = esearch_output_dir / f"{query_file_name}.xml"
 
-    if esearch_output_xml.exists():
-        return
+    if esearch_output_xml.exists() and esearch_output_xml.stat().st_size > 0:
+        with open(esearch_output_xml, "r") as f:
+            if get_esearch_key(f.read(), default=None) is not None:
+                return
 
-    args = ["esearch", "-db", "pubmed", "-query", query]
-    logging.info(" ".join(args))
-    output = subprocess.run(
-        args,
-        capture_output=True,
-        text=True,
-    )
-    if output.returncode != 0:
-        logging.warning(f"Query esearch {query} failed")
-        logging.warning(output.stderr)
-        return
+    args = ["esearch", "-db", "pubmed", "-query", unidecode(query)]
+    while True:
+        logging.info(" ".join(args))
+        output = subprocess.run(
+            args,
+            capture_output=True,
+            text=True,
+        )
+        if output.returncode != 0:
+            logging.warning(f"Query esearch {query} failed")
+            logging.warning(output.stderr)
+            return
+        if output.stdout and get_esearch_key(output.stdout, default=None) is not None:
+            break
+        else:
+            logging.warning(f"Empty esearch output for {query}")
+            logger.warning(output.stderr)
     with open(esearch_output_xml, "w") as f:
         f.write(output.stdout)
 
