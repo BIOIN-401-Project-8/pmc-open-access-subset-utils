@@ -44,6 +44,7 @@ about 200 GB of disk space. This step speeds up the query process by storing
 the abstracts locally.
 ```bash
 docker compose run devcontainer archive-pubmed
+docker compose run devcontainer archive-pubmed -index
 ```
 
 3. Run PubMed queries to retrieve relevant PMIDs. This step takes about 2 hours.
