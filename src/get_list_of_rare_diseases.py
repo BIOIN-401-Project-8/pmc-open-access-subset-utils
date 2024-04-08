@@ -17,6 +17,7 @@ def main():
     df = df.drop_duplicates()
     # replace and/or with OR
     df["rare_disease"] = df["rare_disease"].str.replace(r" and/or ", r" or ", regex=True)
+    df["rare_disease"] = df["rare_disease"].str.replace(r" or/and ", r" or ", regex=True)
     # for terms containing OR, we need to wrap them in parentheses
     df["rare_disease"] = df["rare_disease"].str.replace(r"([\w-]+ or [\w]+)", r"(\1)", regex=True)
     df.to_csv("data/rare_diseases.csv", index=False, encoding="utf-8")
