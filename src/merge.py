@@ -88,7 +88,7 @@ def main():
     logger.info("Merging PubMed and efetch dataframes...")
     merged_df = pubmed_df.merge(efetch_df, on="PMID", how="right")
     logger.info(f"Length of merged dataframe: {len(merged_df)}")
-    out_csv_path = "/workspaces/data/pmc-open-access-subset/merged.csv"
+    out_csv_path = "/data/pmc-open-access-subset/merged.csv"
     logger.info(f"Saving merged dataframe to {out_csv_path}")
     merged_df.to_csv(out_csv_path, index=False)
 
