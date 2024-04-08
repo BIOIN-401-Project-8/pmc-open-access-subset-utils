@@ -20,10 +20,14 @@ the PubMed Central Open Access Subset.
    to mount `/data/bioin-401-project` on your local mahine to `/data` in the
    container, add the following to the `docker-compose.yml` file. If you skip
    this step, the data will be stored in the container and will be lost when the
-   container is removed.
+   container is removed. Also, add the `EDIRECT_LOCAL_ARCHIVE` environment
+   variable to the `docker-compose.yml` file to specify the location of the
+   local PubMed archive.
 ```yaml
 services:
   devcontainer:
+    environment:
+      - EDIRECT_LOCAL_ARCHIVE=/workspaces/data/Archive
     volumes:
       - /data/bioin-401-project:/data:cached
 ```
@@ -83,4 +87,5 @@ crontab -e
 
 ## Reference
 
-https://www.ncbi.nlm.nih.gov/pmc/tools/ftp/
+- https://www.ncbi.nlm.nih.gov/books/NBK179288/
+- https://www.ncbi.nlm.nih.gov/pmc/tools/ftp/
