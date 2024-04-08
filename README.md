@@ -35,29 +35,49 @@ services:
 docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
 
-2. Run PubMed queries to retrieve relevant PMIDs and abstracts. This step takes
-about 6 hours. This step could be sped up by restricting the queries further or
-cutting off the number of articles we are searching for each query. This requires
-about 82 GB of disk space.
+2. Archive PubMed abstracts, this step takes about 2 hours. This step requires
+about 200 GB of disk space. This step speeds up the query process by storing
+the abstracts locally.
+```bash
+docker compose run devcontainer archive-pubmed
+```
+
+3. Run PubMed queries to retrieve relevant PMIDs. This step takes about 2 hours.
+This step could be sped up by restricting the queries further or cutting off the
+number of articles we are searching for each query. This requires about 82 GB of
+disk space.
 ```bash
 
-docker compose run devcontainer python3 ./src/query.py ./data/rare_genetic_disease_names.csv /data/pmc-open-access-subset/
+docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv /data/pmc-open-access-subset/
 ```
-3. Setup crontab to run the sync script at 2 am daily.
+
+4. Run the merge script to merge the results of the queries into a single CSV file.
+```bash
+docker compose run devcontainer python3 ./src/merge.py /data/pmc-open-access-subset/
+```
+
+5. Setup crontab to run the sync script at 2 am daily.
 ```bash
 crontab -e
 # Add the below line to the crontab
 0 2 * * * docker compose run devcontainer python3 ./sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
 
-4. Setup crontab to run the query script at 3 am daily.
+6. Setup crontab to run the query script at 3 am daily.
 ```bash
 crontab -e
 # Add the below line to the crontab
 0 3 * * * docker compose run devcontainer python3 run_queries.py rare_genetic_disease_names.csv /data/pmc-open-access-subset/
 ```
 
-5. In mid-June and mid-December, when new baseline packages are created run the
+7. Setup crontab to run the merge script at 4 am daily.
+```bash
+crontab -e
+# Add the below line to the crontab
+0 4 * * * docker compose run devcontainer python3 merge.py /data/pmc-open-access-subset/
+```
+
+8. In mid-June and mid-December, when new baseline packages are created run the
    sync script will remove the old data and download the new data.
 
 
