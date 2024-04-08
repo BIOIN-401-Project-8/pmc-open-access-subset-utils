@@ -48,9 +48,13 @@ def main():
     )
     df = df.sort_values(by="esearch_output_size", ascending=True)
     df = df[df["esearch_output_size"] > 0]
-    df["query_contains_syndrome"] = df[df.columns[0]].str.contains("Syndrome", case=False)
+
     # if esearch_output_size is the same as previous and the query contains "Syndrome" skip
+    # lots of queries with Syndrome that result in "The following term was not found in PubMed:"
+    # and only end up returning=results for "Syndrome"
+    df["query_contains_syndrome"] = df[df.columns[0]].str.contains("Syndrome", case=False)
     df = df.drop_duplicates(subset=["esearch_output_size", "query_contains_syndrome"], keep="first")
+
     df["csv_output_exists"] = df[df.columns[0]].apply(
         lambda query: (csv_output_dir / f"{get_query_file_name(query)}.csv").exists()
     )
