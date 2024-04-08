@@ -7,7 +7,7 @@ def main():
     rare_diseases = []
 
     # https://www.orphadata.com/data/xml/en_product7.xml
-    with open("data/en_product7.xml", "r", encoding="latin-1") as f:
+    with open("data/en_product7.xml", "r", encoding="ISO-8859-1") as f:
         root = ET.parse(f).getroot()
         for disorder in root.findall(".//Disorder"):
             name = disorder.find("Name").text
@@ -15,7 +15,7 @@ def main():
 
     df = pd.DataFrame(rare_diseases, columns=["rare_disease"])
     df = df.drop_duplicates()
-    df.to_csv("data/rare_diseases.csv", index=False)
+    df.to_csv("data/rare_diseases2.csv", index=False)
 
 
 if __name__ == "__main__":
