@@ -11,7 +11,8 @@ from utils import get_esearch_key
 esearchs = glob("/data/pmc-open-access-subset/esearch/*.xml")
 dfs = []
 for esearch in esearchs:
-    esearch_count = get_esearch_key(esearch)
+    with open(esearch) as f:
+        esearch_count = get_esearch_key(f.read())
     dfs.append(pd.DataFrame({"count": [esearch_count], "disease": [Path(esearch).stem]}))
 df = pd.concat(dfs)
 df = df.sort_values("count", ascending=False)
@@ -34,3 +35,9 @@ plt.bar(range(1, len(df) + 1), df["count"])
 plt.ylabel("Number of articles (log scale)")
 plt.yscale("log")
 plt.show()
+
+# %%
+pd.set_option("display.max_colwidth", None)
+df.tail()
+
+# %%
