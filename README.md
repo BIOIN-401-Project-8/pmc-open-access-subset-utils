@@ -17,14 +17,14 @@ the PubMed Central Open Access Subset.
 ## Usage
 
 0. Create a .env file to mount the desired volume. For example, to mount
-   `/mnt/deepmind/rd-data/` on your local machine to `/data` in the container.
+   `/mnt/deepmind/rd-data` on your local machine to `/data` in the container.
 ```bash
-DATA_PATH=/mnt/deepmind/rd-data/
+DATA_PATH=/mnt/deepmind/rd-data
 ```
 
-1. Bulk download the entire PMC Open Access Subset. This step takes about 4 hours on
-   a fast SSD (write speeds of 5,100 MB/s). The requires about 499 GB of disk
-   space.
+1. Bulk download the entire PMC Open Access Subset. This step took 1 hour 35
+   minutes and 53 seconds on a fast SSD (write speeds of 5,000 MB/s) and
+   requires about 450 GB of disk space.
 ```bash
 docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
@@ -33,7 +33,7 @@ docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncb
 about 200 GB of disk space. This step speeds up the query process by storing
 the abstracts locally.
 ```bash
-docker compose run devcontainer archive-pubmed
+docker compose run devcontainer bash -c "mkdir -p /data/Archive; ~/edirect/archive-pubmed"
 docker compose run devcontainer archive-pubmed -index
 ```
 
