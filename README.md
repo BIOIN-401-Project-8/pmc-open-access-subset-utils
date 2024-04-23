@@ -48,7 +48,7 @@ docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv 
 
 4. Run the merge script to merge the results of the queries into a single CSV file.
 ```bash
-docker compose run devcontainer python3 ./src/merge.py /data/pmc-open-access-subset/
+docker compose run devcontainer python3 ./src/merge.py --output_dir /data/pmc-open-access-subset/
 ```
 
 5. Setup crontab to run the sync script at 2 am daily.
