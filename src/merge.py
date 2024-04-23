@@ -65,7 +65,7 @@ def copy_article(path, output_dir):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir", type=str, default="/data/pmc-open-access-subset")
+    parser.add_argument("--output_dir", type=str, default="/workspaces/data/pmc-open-access-subset")
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
