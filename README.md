@@ -22,9 +22,9 @@ the PubMed Central Open Access Subset.
 DATA_PATH=/mnt/deepmind/rd-data
 ```
 
-1. Bulk download the entire PMC Open Access Subset. This step takes about 4 hours on
-   a fast SSD (write speeds of 5,100 MB/s). The requires about 499 GB of disk
-   space.
+1. Bulk download the entire PMC Open Access Subset. This step took 1 hour 35
+   minutes and 53 seconds on a fast SSD (write speeds of 5,000 MB/s) and
+   requires about 450 GB of disk space.
 ```bash
 docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
