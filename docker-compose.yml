@@ -1,7 +1,7 @@
 services:
   devcontainer:
     environment:
-      - EDIRECT_LOCAL_ARCHIVE=/workspaces/data/Archive
+      - EDIRECT_LOCAL_ARCHIVE=${DATA_PATH}/Archive
       - NCBI_API_KEY=${NCBI_API_KEY}
     build:
       context: .
@@ -13,5 +13,5 @@ services:
       - ~/.gitconfig:/root/.gitconfig:cached
       - ~/.wakatime.cfg:/root/.wakatime.cfg:cached
       - ~/.cache:/root/.cache:cached
-      - /data/bioin-401-project:/data:cached
+      - ${DATA_PATH}:/data:cached
     command: sleep infinity

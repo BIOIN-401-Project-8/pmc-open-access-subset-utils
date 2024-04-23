@@ -10,6 +10,4 @@ RUN echo "export PATH=\$HOME/edirect:\$PATH" >> $HOME/.bash_profile
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# mkdir -p $EDIRECT_LOCAL_ARCHIVE
-# archive-pubmed
-# ?archive-pubmed -index
+WORKDIR /workspaces/pmc-open-access-subset-utils

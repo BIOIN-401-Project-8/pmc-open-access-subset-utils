@@ -16,20 +16,10 @@ the PubMed Central Open Access Subset.
 
 ## Usage
 
-0. Edit the docker-compose yaml file to mount the desired volume. For example,
-   to mount `/data/bioin-401-project` on your local mahine to `/data` in the
-   container, add the following to the `docker-compose.yml` file. If you skip
-   this step, the data will be stored in the container and will be lost when the
-   container is removed. Also, add the `EDIRECT_LOCAL_ARCHIVE` environment
-   variable to the `docker-compose.yml` file to specify the location of the
-   local PubMed archive.
-```yaml
-services:
-  devcontainer:
-    environment:
-      - EDIRECT_LOCAL_ARCHIVE=/workspaces/data/Archive
-    volumes:
-      - /data/bioin-401-project:/data:cached
+0. Create a .env file to mount the desired volume. For example, to mount
+   `/mnt/deepmind/rd-data/` on your local machine to `/data` in the container.
+```bash
+DATA_PATH=/mnt/deepmind/rd-data/
 ```
 
 1. Bulk download the entire PMC Open Access Subset. This step takes about 4 hours on
