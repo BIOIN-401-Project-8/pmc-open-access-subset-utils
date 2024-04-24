@@ -29,9 +29,9 @@ DATA_PATH=/mnt/deepmind/rd-data
 docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
 
-2. Archive PubMed abstracts, this step takes about 2 hours. This step requires
-about 200 GB of disk space. This step speeds up the query process by storing
-the abstracts locally.
+2. Download all PubMed abstracts, and build an index, this step takes about 2
+hours. This step requires about 200 GB of disk space. This step speeds up the
+query process by storing the abstracts locally.
 ```bash
 docker compose run devcontainer bash -c "mkdir -p /data/Archive; ~/edirect/archive-pubmed"
 docker compose run devcontainer archive-pubmed -index
