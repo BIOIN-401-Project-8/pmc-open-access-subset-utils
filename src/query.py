@@ -21,6 +21,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run queries on PubMed")
     parser.add_argument("query_csv", type=str, help="Path to CSV file with queries")
     parser.add_argument("output_dir", type=str, help="Path to output directory")
+    parser.add_argument("--use_api", action="store_true", help="Use PubMed API to run queries")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -41,38 +42,36 @@ def main():
 
     logger.info(f"Running esearch for {len(df)} queries")
 
-    thread_map(lambda query: run_esearch(query, esearch_output_dir), df[df.columns[0]], max_workers=10)
+    if args.use_api:
+        thread_map(lambda query: run_esearch(query, esearch_output_dir), df[df.columns[0]], max_workers=10)
 
-    # sort df by size of esearch output
-    df["esearch_output_size"] = df[df.columns[0]].apply(
-        lambda query: get_esearch_key((esearch_output_dir / f"{get_query_file_name(query)}.xml").read_text()) if (esearch_output_dir / f"{get_query_file_name(query)}.xml").exists() else 0
-    )
-    df = df.sort_values(by="esearch_output_size", ascending=True)
-    df = df[df["esearch_output_size"] > 0]
+        # sort df by size of esearch output
+        df["esearch_output_size"] = df[df.columns[0]].apply(
+            lambda query: get_esearch_key((esearch_output_dir / f"{get_query_file_name(query)}.xml").read_text()) if (esearch_output_dir / f"{get_query_file_name(query)}.xml").exists() else 0
+        )
+        df = df.sort_values(by="esearch_output_size", ascending=True)
+        df = df[df["esearch_output_size"] > 0]
 
-    # if esearch_output_size is the same as previous and the query contains "Syndrome" skip
-    # lots of queries with Syndrome that result in "The following term was not found in PubMed:"
-    # and only end up returning=results for "Syndrome"
-    df["query_contains_syndrome"] = df[df.columns[0]].str.contains("Syndrome", case=False)
-    df = df.drop_duplicates(subset=["esearch_output_size", "query_contains_syndrome"], keep="first")
+        # if esearch_output_size is the same as previous and the query contains "Syndrome" skip
+        # lots of queries with Syndrome that result in "The following term was not found in PubMed:"
+        # and only end up returning=results for "Syndrome"
+        df["query_contains_syndrome"] = df[df.columns[0]].str.contains("Syndrome", case=False)
+        df = df.drop_duplicates(subset=["esearch_output_size", "query_contains_syndrome"], keep="first")
 
-    df["csv_output_exists"] = df[df.columns[0]].apply(
-        lambda query: (csv_output_dir / f"{get_query_file_name(query)}.csv").exists()
-    )
+        logger.info(f"Running efetch for {len(df)} queries")
 
-    df_to_efetch = df[~df["csv_output_exists"]][df.columns[0]]
-    logger.info(f"Running efetch for {len(df_to_efetch)} queries")
-
-    thread_map(lambda query: run_efetch(query, esearch_output_dir, csv_output_dir), df_to_efetch, max_workers=10)
-
+        thread_map(lambda query: run_efetch(query, esearch_output_dir, csv_output_dir), df, max_workers=10)
+    else:
+        thread_map(lambda query: run_phrase_search(query, csv_output_dir), df[df.columns[0]], max_workers=10)
 
 def run_esearch(query: str, esearch_output_dir: Path):
     query_file_name = get_query_file_name(query)
     esearch_output_xml = esearch_output_dir / f"{query_file_name}.xml"
 
-    args = ["esearch", "-db", "pubmed", "-query", unidecode(query)]
+    args = ["/root/edirect/esearch", "-db", "pubmed", "-query", unidecode(query)]
     while True:
-        logging.info(" ".join(args))
+        command = " ".join(args)
+        logging.info(command)
         output = subprocess.run(
             args,
             capture_output=True,
@@ -101,7 +100,7 @@ def run_efetch(query: str, esearch_output_dir: Path, csv_output_dir: Path):
         with open(esearch_output_xml, "r") as f:
             esearch_output = f.read()
             p = subprocess.Popen(
-                ["efetch", "-format", "uid"],
+                ["/root/edirect/efetch", "-format", "uid"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -120,6 +119,32 @@ def run_efetch(query: str, esearch_output_dir: Path, csv_output_dir: Path):
     with open(output_csv, "w") as f:
         f.write('PMID\n')
         f.write(csv)
+
+
+def run_phrase_search(query: str, csv_output_dir: Path):
+    query_file_name = get_query_file_name(query)
+    output_csv = csv_output_dir / f"{query_file_name}.csv"
+
+    query = unidecode(query)
+    query = query.replace(" with ", " ")
+    query = " AND ".join(query.split())
+    args = ["/root/edirect/phrase-search", "-query", f'"{query}"']
+    command = " ".join(args)
+    logging.info(command)
+    output = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        shell=True,
+        executable="/bin/bash",
+    )
+    if output.returncode != 0:
+        logging.warning(f"Query {query} failed")
+        logging.warning(output.stderr)
+        return
+    with open(output_csv, "w") as f:
+        f.write('PMID\n')
+        f.write(output.stdout)
 
 
 if __name__ == "__main__":
