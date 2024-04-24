@@ -9,5 +9,5 @@ docker compose run devcontainer /root/archive-nihocc ‑index &
 wait
 
 # Run query.py and merge.py sequentially
-docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv /data/pmc-open-access-subset/
+docker compose run devcontainer python3 ./src/query.py --use_api ./data/rare_diseases.csv /data/pmc-open-access-subset/
 docker compose run devcontainer python3 ./src/merge.py /data/pmc-open-access-subset/
