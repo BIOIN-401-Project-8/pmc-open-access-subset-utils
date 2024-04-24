@@ -29,15 +29,26 @@ DATA_PATH=/mnt/deepmind/rd-data
 docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
 
-2. Download all PubMed abstracts, and build an index, this step takes about 2
-hours. This step requires about 200 GB of disk space. This step speeds up the
-query process by storing the abstracts locally.
+Note: In mid-June and mid-December, when new baseline packages are created run the
+   sync script will remove the old data and download the new data.
+
+2. Download all PubMed abstracts, this step took 11 hours 13 minutes and 27
+seconds. This step requires about 210 GB of disk space.
 ```bash
-docker compose run devcontainer bash -c "mkdir -p /data/Archive; ~/edirect/archive-pubmed"
-docker compose run devcontainer archive-pubmed -index
+docker compose run devcontainer mkdir -p /data/Archive
+docker compose run devcontainer /root/edirect/archive-pubmed
 ```
 
-3. Run PubMed queries to retrieve relevant PMIDs. This step takes about 2 hours.
+3. Build a local PubMed search index, this step took ?. This step requires about
+210 GB of disk space. This step speeds up the querying process by allowing us to
+search the local index instead of querying the PubMed API which has a rate
+limit.
+```bash
+docker compose run devcontainer /root/archive-pubmed -index
+docker compose run devcontainer /root/archive-nihocc ‑index
+```
+
+4. Run PubMed queries to retrieve relevant PMIDs. This step takes about 2 hours.
 This step could be sped up by restricting the queries further or cutting off the
 number of articles we are searching for each query. This requires about 82 GB of
 disk space.
@@ -46,34 +57,17 @@ disk space.
 docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv /data/pmc-open-access-subset/
 ```
 
-4. Run the merge script to merge the results of the queries into a single CSV file.
+5. Run the merge script to merge the results of the queries into a single CSV file.
 ```bash
 docker compose run devcontainer python3 ./src/merge.py --output_dir /data/pmc-open-access-subset/
 ```
 
-5. Setup crontab to run the sync script at 2 am daily.
+6. Setup crontab to run the sync script at 2 am daily.
 ```bash
 crontab -e
 # Add the below line to the crontab
-0 2 * * * docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
+0 2 * * * bash ~/Github/bioin-401-project/pmc-open-access-subset-utils/src/sync.sh
 ```
-
-6. Setup crontab to run the query script at 3 am daily.
-```bash
-crontab -e
-# Add the below line to the crontab
-0 3 * * * docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv /data/pmc-open-access-subset/
-```
-
-7. Setup crontab to run the merge script at 4 am daily.
-```bash
-crontab -e
-# Add the below line to the crontab
-0 4 * * * docker compose run devcontainer python3 merge.py /data/pmc-open-access-subset/
-```
-
-8. In mid-June and mid-December, when new baseline packages are created run the
-   sync script will remove the old data and download the new data.
 
 
 ## Reference
