@@ -22,9 +22,9 @@ the PubMed Central Open Access Subset.
 DATA_PATH=/mnt/deepmind/rd-data
 ```
 
-1. Bulk download the entire PMC Open Access Subset. This step took 1 hour 35
-   minutes and 53 seconds on a fast SSD (write speeds of 5,000 MB/s) and
-   requires about 450 GB of disk space.
+1. Bulk download the entire PMC Open Access Subset. This step took 1 hour 49
+   minutes and 48 seconds on a fast SSD (write speeds of 5,000 MB/s) and
+   requires about 507 GB of disk space.
 ```bash
 docker compose run devcontainer python3 ./src/sync.py --local_path /data/ftp.ncbi.nlm.nih.gov/pub/pmc/oa_bulk
 ```
@@ -39,10 +39,10 @@ docker compose run devcontainer mkdir -p /data/Archive
 docker compose run devcontainer /root/edirect/archive-pubmed
 ```
 
-3. Build a local PubMed search index, this step took ?. This step requires about
-210 GB of disk space. This step speeds up the querying process by allowing us to
-search the local index instead of querying the PubMed API which has a rate
-limit.
+3. Build a local PubMed search index, this step took 5 hours 52 minutes 44
+seconds. This step requires approximately an additional 210 GB of disk space.
+This step speeds up the querying process by allowing us to search the local
+index instead of querying the PubMed API which has a rate limit.
 ```bash
 docker compose run devcontainer /root/archive-pubmed -index
 docker compose run devcontainer /root/archive-nihocc ‑index
@@ -54,7 +54,7 @@ number of articles we are searching for each query. This requires about 82 GB of
 disk space.
 ```bash
 
-docker compose run devcontainer python3 ./src/query.py ./data/rare_diseases.csv /data/pmc-open-access-subset/
+docker compose run devcontainer python3 ./src/query.py --use_api ./data/rare_diseases.csv /data/pmc-open-access-subset/
 ```
 
 5. Run the merge script to merge the results of the queries into a single CSV file.
