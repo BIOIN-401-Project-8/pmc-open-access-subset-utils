@@ -70,11 +70,6 @@ def run_esearch(query: str, esearch_output_dir: Path):
     query_file_name = get_query_file_name(query)
     esearch_output_xml = esearch_output_dir / f"{query_file_name}.xml"
 
-    if esearch_output_xml.exists() and esearch_output_xml.stat().st_size > 0:
-        with open(esearch_output_xml, "r") as f:
-            if get_esearch_key(f.read(), default=None) is not None:
-                return
-
     args = ["esearch", "-db", "pubmed", "-query", unidecode(query)]
     while True:
         logging.info(" ".join(args))
